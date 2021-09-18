@@ -199,7 +199,19 @@ def find_element_in_rotated_array(array, element):
         else:
             return -1
     else:
-        smallest_index = get_number_of_rotations_binary(array)
+        smallest_index = 0
+        low_index, high_index = 0, array_length-1
+        while low_index <= high_index:
+            middle_index = (low_index+high_index)//2
+            if array[middle_index] == element:
+                return middle_index
+            elif array[middle_index] < array[middle_index-1]:
+                smallest_index = middle_index
+                break
+            elif array[middle_index] < array[high_index]:
+                high_index = middle_index-1
+            else:
+                low_index = middle_index+1
         if array[smallest_index] == element:
             return smallest_index
         if array[0] == element:
