@@ -118,7 +118,7 @@ tests = [
         'output': 0
     },
     {
-        'input': [19],
+        'input': [1],
         'output': 0
     },
     {
@@ -137,6 +137,7 @@ tests = [
         'input': [1, 2, 3, 4, 5, 6, 7, 8, 9],
         'output': 0
     },
+
 
 ]
 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
@@ -164,6 +165,11 @@ def get_number_of_rotations_binary(array):
             middle_index = (low_index+high_index)//2
             if array[middle_index] < array[middle_index-1]:
                 return middle_index
+            # array[middle_index] <= array[high_index] for repated elements
+            #         {
+            #          'input': [5, 6, 6, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            #           'output': 6
+            #        },
             if array[middle_index] < array[high_index]:
                 high_index = middle_index-1
             else:
@@ -174,3 +180,77 @@ def get_number_of_rotations_binary(array):
 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 for test in tests:
     print(get_number_of_rotations_binary(test["input"]))
+
+"""
+3)Question 3: Searching in a Rotated List
+Here's a slightly advanced extension to this problem:
+
+You are given list of numbers, obtained by rotating a sorted list an unknown number of times. You are also given a target number. Write a function to find the position of the target number within the rotated list. You can assume that all the numbers in the list are unique.
+"""
+
+
+def find_element_in_rotated_array(array, element):
+    array_length = len(array)
+    if not array_length:
+        return -1
+    elif array_length == 1:
+        if array[0] == element:
+            return 0
+        else:
+            return -1
+    else:
+        smallest_index = get_number_of_rotations_binary(array)
+        if array[smallest_index] == element:
+            return smallest_index
+        if array[0] == element:
+            return 0
+        else:
+            if smallest_index == 0:
+                low_index, high_index = 0, array_length-1
+            elif array[0] > element:
+                low_index, high_index = smallest_index+1, array_length-1
+            else:
+                low_index, high_index = 0, smallest_index-1
+            while low_index <= high_index:
+                middle_index = (low_index+high_index)//2
+                if array[middle_index] == element:
+                    return middle_index
+                elif array[middle_index] > element:
+                    high_index = middle_index - 1
+                elif array[middle_index] < element:
+                    low_index = middle_index + 1
+    return -1
+
+
+tests = [
+    {
+        'input': [19, 25, 29, 3, 5, 6, 7, 9, 11, 14],
+        "element":11,
+        'output': 8
+    },
+    {
+        'input': [],
+        'element':1,
+        'output': -1
+    },
+    {
+        'input': [1],
+        'element':1,
+        'output': 0
+    },
+    {
+        'input': [2, 3, 4, 5, 6, 7, 8, 9, 1],
+        'element':3,
+        'output': 1
+    },
+    {
+        'input': [2, 1],
+        'element':2,
+        'output': 0
+    },
+
+]
+print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+for test in tests:
+    print(find_element_in_rotated_array(
+        test["input"], test["element"]) == test["output"])
