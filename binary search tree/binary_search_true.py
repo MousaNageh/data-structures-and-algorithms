@@ -1,4 +1,6 @@
 # https://jovian.ai/learn/data-structures-and-algorithms-in-python/lesson/lesson-2-binary-search-nodes-traversals-and-balancing
+
+
 class nodeNode:
     def __init__(self, key):
         self.key = key
@@ -55,6 +57,20 @@ def size_of_node(node):
         return 1+size_of_node(node.left)+size_of_node(node.right)
 
 
+def max_depth(node):
+    if node == None:
+        return 0
+    else:
+        return max(max_depth(node.left)+1, max_depth(node.right)+1)
+
+
+def min_depth(node):
+    if node == None:
+        return 0
+    else:
+        return min(max_depth(node.left)+1, max_depth(node.right)+1)
+
+
 def travelse_in_order(node):
     if node is None:
         return []
@@ -77,15 +93,50 @@ def travelse_post_order(node):
         return travelse_post_order(node.left)+travelse_post_order(node.right)+[node.key]
 
 
-# node_tuple = ((1, 3, None), 2, ((None, 3, 4), 5, (6, 7, 8)))
-node_tuple = (((None, 3, None), 4, (None, 5, None)),
-              6, ((None, 7, None), 8, (None, 9, None)))
+node_tuple = ((1, 3, None), 2, ((None, 3, 4), 5, (6, 7, 8)))
+# node_tuple = (((None, 3, None), 4, (None, 5, None)),
+#               6, ((None, 7, None), 8, (None, 9, None)))
 node = parse_tuple_to_node(node_tuple)
-print(display_node(node))
-print(hight_of_node(node))
-print(travelse_pre_order(node))
-print(travelse_in_order(node))
-print(travelse_post_order(node))
+print(min_depth(node))
+
+
+"""
+Binary Search Tree (BST)
+A binary search tree or BST is a binary tree that satisfies the following conditions:
+
+The left subtree of any node only contains nodes with keys less than the node's key
+The right subtree of any node only contains nodes with keys greater than the node's key
+It follows from the above conditions that every subtree of a binary search tree must also be a binary search tree.
+
+QUESTION 8: Write a function to check if a binary tree is a binary search tree (BST).
+
+QUESTION 9: Write a function to find the maximum key in a binary tree.
+
+QUESTION 10: Write a function to find the minimum key in a binary tree.
+
+Here's a function that covers all of the above:
+"""
+
+
+def remove_none(nums):
+    return [num for num in nums if num is not None]
+
+
+def is_bst(node):
+    if node is None:
+        return True, None, None
+    is_bst_left, min_left, max_left = is_bst(node.left)
+    is_bst_right, min_right, max_right = is_bst(node.right)
+
+    is_bst_node = (is_bst_left and is_bst_right and (
+        max_left is None or max_left < node.key) and (min_right is None or min_right > node.key))
+
+    min_key = min(remove_none([min_left, node.key, min_right]))
+    max_key = max(remove_none([max_left, node.key, max_right]))
+    return is_bst_node, min_key, max_key
+
+
+print(is_bst(node))
 
 """                     QUESTION
 QUESTION 1: As a senior backend engineer at Jovian, you are tasked with developing a fast in-memory data structure to manage profile information (username, name and email) for 100 million users. It should allow the following operations to be performed efficiently:
@@ -112,6 +163,15 @@ class User:
     # string  represnation
     def __str__(self):
         return self.__repr__()
+
+
+class BSTUser:
+    def __init__(self, key, value=None):
+        self.key = key
+        self.left = None
+        self.right = None
+        self.value = value
+        self.parent = None
 
 
 class UserDatabase:
