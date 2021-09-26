@@ -166,12 +166,19 @@ class User:
 
 
 class BSTUser:
-    def __init__(self, key, value=None):
-        self.key = key
+    def __init__(self, username, value=None):
+        self.username = username
         self.left = None
         self.right = None
         self.value = value
         self.parent = None
+        # string  represnation in list or tuble
+    def __repr__(self):
+        return "User(username='{}', name='{}', email='{}')".format(self.username, self.value.name, self.value.email)
+
+    # string  represnation
+    def __str__(self):
+        return self.__repr__()
 
 
 class UserDatabase:
@@ -230,6 +237,7 @@ class UserDatabase:
         return self.users
 
 
+
 user_1 = User('aakash', 'Aakash Rai', 'aakash@example.com')
 user_2 = User('biraj', 'Biraj Das', 'biraj@example.com')
 user_3 = User('hemanth', 'Hemanth Jain', 'hemanth@example.com')
@@ -251,4 +259,67 @@ database = UserDatabase()
 
 for user in users:
     database.insert(user)
-# print(database.list_all())
+
+
+class BSTDatabase:
+    def insert(self,node,username,user):
+        if node is None:
+            node = BSTUser(username,user)
+        elif node.username < username:
+            node.left = self.insert(node.left,username,user)
+            node.left.parent = node
+        elif node.username > username :
+            node.right = self.insert(node.right,username,user)
+            node.right.parent = node
+        return node
+    def find(self,node,username):
+        if node is None:
+            return None 
+        elif node.username == username:
+            return node 
+        elif node.username > username:
+            return self.find(node.left,username)
+        elif node.username < username:
+            return self.find(node.right,username)
+    def update(self,node,user):
+        user = self.find(node,user.username)
+        if user is None:
+            return None 
+        else:
+            user.value = user
+            return user
+
+    def list_all(self,node):
+        if node is None:
+                return []
+        return self.list_all(node.left) + [(node.username, node.value)] + self.list_all(node.right)
+    
+
+
+
+database = BSTDatabase()
+root = database.insert(None,user_1.username,user_1)
+users = [
+    user_2,
+    user_3,
+    user_4,
+    user_5,
+    user_6,
+    user_7,
+]
+for user in users :
+    database.insert(root,user.username,user)
+
+def display_node_users(node, space="\t", level=0):
+    if node is None:
+        print(space*level)
+        return
+    if node.left is None and node.right is None:
+        print(space*level + str(node.username))
+        return
+    print("\t")
+    display_node_users(node.right, space, level+1)
+    print(space*level + str(node.username))
+    display_node_users(node.left, space, level+1)
+
+display_node_users(root)
